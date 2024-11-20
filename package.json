@@ -1,5 +1,5 @@
 {
-  "name": "exploregame-types",
+  "name": "@exploregame/types",
   "description": "Types-Sharing package for the ExploreGame project",
   "version": "1.0.0",
   "main": "index.d.ts",
