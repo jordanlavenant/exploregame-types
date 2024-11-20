@@ -1,0 +1,17 @@
+{
+  "name": "exploregame-types",
+  "description": "Types-Sharing package for the ExploreGame project",
+  "version": "1.0.0",
+  "main": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "LAVENANT - LUCIDOR - MALLERON - PIGOREAU",
+  "license": "All rights reserved",
+  "keywords": [
+    "types",
+    "types-sharing",
+    "exploregame",
+    "orleans"
+  ]
+}
