@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 import { MergePrismaWithSdlTypes, MakeRelationsOptional } from '@redwoodjs/api'
-import { Script as PrismaScript, Location as PrismaLocation, Step as PrismaStep, ScriptStep as PrismaScriptStep, Department as PrismaDepartment, QuestionType as PrismaQuestionType, Question as PrismaQuestion, Answer as PrismaAnswer, HintLevel as PrismaHintLevel, Hint as PrismaHint, User as PrismaUser, Gender as PrismaGender, Player as PrismaPlayer, PlayerScript as PrismaPlayerScript } from '@prisma/client'
+import { Script as PrismaScript, Location as PrismaLocation, Step as PrismaStep, ScriptStep as PrismaScriptStep, Department as PrismaDepartment, QuestionType as PrismaQuestionType, Question as PrismaQuestion, Answer as PrismaAnswer, HintLevel as PrismaHintLevel, Hint as PrismaHint, User as PrismaUser, Gender as PrismaGender, Player as PrismaPlayer, PlayerScript as PrismaPlayerScript, ColorSet as PrismaColorSet } from '@prisma/client'
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { RedwoodGraphQLContext } from '@redwoodjs/graphql-server/dist/types';
 export type Maybe<T> = T | null;
@@ -55,13 +55,29 @@ export type AuthPayload = {
   token: Scalars['String'];
 };
 
+export type ColorSet = {
+  __typename?: 'ColorSet';
+  Department: Array<Maybe<Department>>;
+  id: Scalars['String'];
+  primary: Scalars['String'];
+  secondary: Scalars['String'];
+  tertiary: Scalars['String'];
+};
+
 export type CreateAnswerInput = {
   answer: Scalars['String'];
   description: Scalars['String'];
   questionId: Scalars['String'];
 };
 
+export type CreateColorSetInput = {
+  primary: Scalars['String'];
+  secondary: Scalars['String'];
+  tertiary: Scalars['String'];
+};
+
 export type CreateDepartmentInput = {
+  colorSetId: Scalars['String'];
   description: Scalars['String'];
   name: Scalars['String'];
 };
@@ -96,9 +112,11 @@ export type CreatePlayerInput = {
 
 export type CreatePlayerScriptInput = {
   playerId: Scalars['String'];
+  questionId: Scalars['String'];
   remainingTime: Scalars['Int'];
   score: Scalars['Int'];
   scriptId: Scalars['String'];
+  stepId: Scalars['String'];
 };
 
 export type CreateQuestionInput = {
@@ -139,8 +157,10 @@ export type CreateUserInput = {
 
 export type Department = {
   __typename?: 'Department';
+  ColorSet: ColorSet;
   Player: Array<Maybe<Player>>;
   Script: Array<Maybe<Script>>;
+  colorSetId: Scalars['String'];
   description: Scalars['String'];
   id: Scalars['String'];
   name: Scalars['String'];
@@ -186,6 +206,7 @@ export type LoginPlayerInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createAnswer: Answer;
+  createColorSet: ColorSet;
   createDepartment: Department;
   createGender: Gender;
   createHint: Hint;
@@ -200,6 +221,7 @@ export type Mutation = {
   createStep: Step;
   createUser: User;
   deleteAnswer: Answer;
+  deleteColorSet: ColorSet;
   deleteDepartment: Department;
   deleteGender: Gender;
   deleteHint: Hint;
@@ -215,6 +237,7 @@ export type Mutation = {
   deleteUser: User;
   loginPlayer: AuthPayload;
   updateAnswer: Answer;
+  updateColorSet: ColorSet;
   updateDepartment: Department;
   updateGender: Gender;
   updateHint: Hint;
@@ -233,6 +256,11 @@ export type Mutation = {
 
 export type MutationcreateAnswerArgs = {
   input: CreateAnswerInput;
+};
+
+
+export type MutationcreateColorSetArgs = {
+  input: CreateColorSetInput;
 };
 
 
@@ -302,6 +330,11 @@ export type MutationcreateUserArgs = {
 
 
 export type MutationdeleteAnswerArgs = {
+  id: Scalars['String'];
+};
+
+
+export type MutationdeleteColorSetArgs = {
   id: Scalars['String'];
 };
 
@@ -379,6 +412,12 @@ export type MutationloginPlayerArgs = {
 export type MutationupdateAnswerArgs = {
   id: Scalars['String'];
   input: UpdateAnswerInput;
+};
+
+
+export type MutationupdateColorSetArgs = {
+  id: Scalars['String'];
+  input: UpdateColorSetInput;
 };
 
 
@@ -476,12 +515,16 @@ export type Player = {
 export type PlayerScript = {
   __typename?: 'PlayerScript';
   Player: Player;
+  Question: Question;
   Script: Script;
+  Step: Step;
   id: Scalars['String'];
   playerId: Scalars['String'];
+  questionId: Scalars['String'];
   remainingTime: Scalars['Int'];
   score: Scalars['Int'];
   scriptId: Scalars['String'];
+  stepId: Scalars['String'];
 };
 
 /** About the Redwood queries. */
@@ -489,6 +532,8 @@ export type Query = {
   __typename?: 'Query';
   answer?: Maybe<Answer>;
   answers: Array<Answer>;
+  colorSet?: Maybe<ColorSet>;
+  colorSets: Array<ColorSet>;
   department?: Maybe<Department>;
   departments: Array<Department>;
   gender?: Maybe<Gender>;
@@ -522,6 +567,12 @@ export type Query = {
 
 /** About the Redwood queries. */
 export type QueryanswerArgs = {
+  id: Scalars['String'];
+};
+
+
+/** About the Redwood queries. */
+export type QuerycolorSetArgs = {
   id: Scalars['String'];
 };
 
@@ -607,6 +658,7 @@ export type Question = {
   __typename?: 'Question';
   Answer: Array<Maybe<Answer>>;
   Hint: Array<Maybe<Hint>>;
+  PlayerScript: Array<Maybe<PlayerScript>>;
   QuestionType: QuestionType;
   Step: Step;
   description: Scalars['String'];
@@ -675,7 +727,14 @@ export type UpdateAnswerInput = {
   questionId?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateColorSetInput = {
+  primary?: InputMaybe<Scalars['String']>;
+  secondary?: InputMaybe<Scalars['String']>;
+  tertiary?: InputMaybe<Scalars['String']>;
+};
+
 export type UpdateDepartmentInput = {
+  colorSetId?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
 };
@@ -710,9 +769,11 @@ export type UpdatePlayerInput = {
 
 export type UpdatePlayerScriptInput = {
   playerId?: InputMaybe<Scalars['String']>;
+  questionId?: InputMaybe<Scalars['String']>;
   remainingTime?: InputMaybe<Scalars['Int']>;
   score?: InputMaybe<Scalars['Int']>;
   scriptId?: InputMaybe<Scalars['String']>;
+  stepId?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateQuestionInput = {
@@ -762,7 +823,7 @@ export type User = {
 };
 
 type MaybeOrArrayOfMaybe<T> = T | Maybe<T> | Maybe<T>[];
-type AllMappedModels = MaybeOrArrayOfMaybe<Answer | Department | Gender | Hint | HintLevel | Location | Player | PlayerScript | Question | QuestionType | Script | ScriptStep | Step | User>
+type AllMappedModels = MaybeOrArrayOfMaybe<Answer | ColorSet | Department | Gender | Hint | HintLevel | Location | Player | PlayerScript | Question | QuestionType | Script | ScriptStep | Step | User>
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -828,7 +889,9 @@ export type ResolversTypes = {
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Byte: ResolverTypeWrapper<Scalars['Byte']>;
+  ColorSet: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaColorSet, MakeRelationsOptional<ColorSet, AllMappedModels>, AllMappedModels>>;
   CreateAnswerInput: CreateAnswerInput;
+  CreateColorSetInput: CreateColorSetInput;
   CreateDepartmentInput: CreateDepartmentInput;
   CreateGenderInput: CreateGenderInput;
   CreateHintInput: CreateHintInput;
@@ -867,6 +930,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   UpdateAnswerInput: UpdateAnswerInput;
+  UpdateColorSetInput: UpdateColorSetInput;
   UpdateDepartmentInput: UpdateDepartmentInput;
   UpdateGenderInput: UpdateGenderInput;
   UpdateHintInput: UpdateHintInput;
@@ -890,7 +954,9 @@ export type ResolversParentTypes = {
   BigInt: Scalars['BigInt'];
   Boolean: Scalars['Boolean'];
   Byte: Scalars['Byte'];
+  ColorSet: MergePrismaWithSdlTypes<PrismaColorSet, MakeRelationsOptional<ColorSet, AllMappedModels>, AllMappedModels>;
   CreateAnswerInput: CreateAnswerInput;
+  CreateColorSetInput: CreateColorSetInput;
   CreateDepartmentInput: CreateDepartmentInput;
   CreateGenderInput: CreateGenderInput;
   CreateHintInput: CreateHintInput;
@@ -929,6 +995,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Time: Scalars['Time'];
   UpdateAnswerInput: UpdateAnswerInput;
+  UpdateColorSetInput: UpdateColorSetInput;
   UpdateDepartmentInput: UpdateDepartmentInput;
   UpdateGenderInput: UpdateGenderInput;
   UpdateHintInput: UpdateHintInput;
@@ -993,6 +1060,24 @@ export interface ByteScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
   name: 'Byte';
 }
 
+export type ColorSetResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['ColorSet'] = ResolversParentTypes['ColorSet']> = {
+  Department: OptArgsResolverFn<Array<Maybe<ResolversTypes['Department']>>, ParentType, ContextType>;
+  id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  primary: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  secondary: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  tertiary: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type ColorSetRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['ColorSet'] = ResolversParentTypes['ColorSet']> = {
+  Department?: RequiredResolverFn<Array<Maybe<ResolversTypes['Department']>>, ParentType, ContextType>;
+  id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  primary?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  secondary?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  tertiary?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Date'], any> {
   name: 'Date';
 }
@@ -1002,8 +1087,10 @@ export interface DateTimeScalarConfig extends GraphQLScalarTypeConfig<ResolversT
 }
 
 export type DepartmentResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Department'] = ResolversParentTypes['Department']> = {
+  ColorSet: OptArgsResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType>;
   Player: OptArgsResolverFn<Array<Maybe<ResolversTypes['Player']>>, ParentType, ContextType>;
   Script: OptArgsResolverFn<Array<Maybe<ResolversTypes['Script']>>, ParentType, ContextType>;
+  colorSetId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   description: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   name: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
@@ -1011,8 +1098,10 @@ export type DepartmentResolvers<ContextType = RedwoodGraphQLContext, ParentType 
 };
 
 export type DepartmentRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Department'] = ResolversParentTypes['Department']> = {
+  ColorSet?: RequiredResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType>;
   Player?: RequiredResolverFn<Array<Maybe<ResolversTypes['Player']>>, ParentType, ContextType>;
   Script?: RequiredResolverFn<Array<Maybe<ResolversTypes['Script']>>, ParentType, ContextType>;
+  colorSetId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   description?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   name?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
@@ -1097,6 +1186,7 @@ export type LocationRelationResolvers<ContextType = RedwoodGraphQLContext, Paren
 
 export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createAnswer: Resolver<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationcreateAnswerArgs, 'input'>>;
+  createColorSet: Resolver<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationcreateColorSetArgs, 'input'>>;
   createDepartment: Resolver<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationcreateDepartmentArgs, 'input'>>;
   createGender: Resolver<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationcreateGenderArgs, 'input'>>;
   createHint: Resolver<ResolversTypes['Hint'], ParentType, ContextType, RequireFields<MutationcreateHintArgs, 'input'>>;
@@ -1111,6 +1201,7 @@ export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
   createStep: Resolver<ResolversTypes['Step'], ParentType, ContextType, RequireFields<MutationcreateStepArgs, 'input'>>;
   createUser: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationcreateUserArgs, 'input'>>;
   deleteAnswer: Resolver<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationdeleteAnswerArgs, 'id'>>;
+  deleteColorSet: Resolver<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationdeleteColorSetArgs, 'id'>>;
   deleteDepartment: Resolver<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationdeleteDepartmentArgs, 'id'>>;
   deleteGender: Resolver<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationdeleteGenderArgs, 'id'>>;
   deleteHint: Resolver<ResolversTypes['Hint'], ParentType, ContextType, RequireFields<MutationdeleteHintArgs, 'id'>>;
@@ -1126,6 +1217,7 @@ export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
   deleteUser: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationdeleteUserArgs, 'id'>>;
   loginPlayer: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationloginPlayerArgs, 'input'>>;
   updateAnswer: Resolver<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationupdateAnswerArgs, 'id' | 'input'>>;
+  updateColorSet: Resolver<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationupdateColorSetArgs, 'id' | 'input'>>;
   updateDepartment: Resolver<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationupdateDepartmentArgs, 'id' | 'input'>>;
   updateGender: Resolver<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationupdateGenderArgs, 'id' | 'input'>>;
   updateHint: Resolver<ResolversTypes['Hint'], ParentType, ContextType, RequireFields<MutationupdateHintArgs, 'id' | 'input'>>;
@@ -1143,6 +1235,7 @@ export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
 
 export type MutationRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   createAnswer?: RequiredResolverFn<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationcreateAnswerArgs, 'input'>>;
+  createColorSet?: RequiredResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationcreateColorSetArgs, 'input'>>;
   createDepartment?: RequiredResolverFn<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationcreateDepartmentArgs, 'input'>>;
   createGender?: RequiredResolverFn<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationcreateGenderArgs, 'input'>>;
   createHint?: RequiredResolverFn<ResolversTypes['Hint'], ParentType, ContextType, RequireFields<MutationcreateHintArgs, 'input'>>;
@@ -1157,6 +1250,7 @@ export type MutationRelationResolvers<ContextType = RedwoodGraphQLContext, Paren
   createStep?: RequiredResolverFn<ResolversTypes['Step'], ParentType, ContextType, RequireFields<MutationcreateStepArgs, 'input'>>;
   createUser?: RequiredResolverFn<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationcreateUserArgs, 'input'>>;
   deleteAnswer?: RequiredResolverFn<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationdeleteAnswerArgs, 'id'>>;
+  deleteColorSet?: RequiredResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationdeleteColorSetArgs, 'id'>>;
   deleteDepartment?: RequiredResolverFn<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationdeleteDepartmentArgs, 'id'>>;
   deleteGender?: RequiredResolverFn<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationdeleteGenderArgs, 'id'>>;
   deleteHint?: RequiredResolverFn<ResolversTypes['Hint'], ParentType, ContextType, RequireFields<MutationdeleteHintArgs, 'id'>>;
@@ -1172,6 +1266,7 @@ export type MutationRelationResolvers<ContextType = RedwoodGraphQLContext, Paren
   deleteUser?: RequiredResolverFn<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationdeleteUserArgs, 'id'>>;
   loginPlayer?: RequiredResolverFn<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationloginPlayerArgs, 'input'>>;
   updateAnswer?: RequiredResolverFn<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationupdateAnswerArgs, 'id' | 'input'>>;
+  updateColorSet?: RequiredResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationupdateColorSetArgs, 'id' | 'input'>>;
   updateDepartment?: RequiredResolverFn<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationupdateDepartmentArgs, 'id' | 'input'>>;
   updateGender?: RequiredResolverFn<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationupdateGenderArgs, 'id' | 'input'>>;
   updateHint?: RequiredResolverFn<ResolversTypes['Hint'], ParentType, ContextType, RequireFields<MutationupdateHintArgs, 'id' | 'input'>>;
@@ -1217,29 +1312,39 @@ export type PlayerRelationResolvers<ContextType = RedwoodGraphQLContext, ParentT
 
 export type PlayerScriptResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['PlayerScript'] = ResolversParentTypes['PlayerScript']> = {
   Player: OptArgsResolverFn<ResolversTypes['Player'], ParentType, ContextType>;
+  Question: OptArgsResolverFn<ResolversTypes['Question'], ParentType, ContextType>;
   Script: OptArgsResolverFn<ResolversTypes['Script'], ParentType, ContextType>;
+  Step: OptArgsResolverFn<ResolversTypes['Step'], ParentType, ContextType>;
   id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   playerId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  questionId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   remainingTime: OptArgsResolverFn<ResolversTypes['Int'], ParentType, ContextType>;
   score: OptArgsResolverFn<ResolversTypes['Int'], ParentType, ContextType>;
   scriptId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  stepId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type PlayerScriptRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['PlayerScript'] = ResolversParentTypes['PlayerScript']> = {
   Player?: RequiredResolverFn<ResolversTypes['Player'], ParentType, ContextType>;
+  Question?: RequiredResolverFn<ResolversTypes['Question'], ParentType, ContextType>;
   Script?: RequiredResolverFn<ResolversTypes['Script'], ParentType, ContextType>;
+  Step?: RequiredResolverFn<ResolversTypes['Step'], ParentType, ContextType>;
   id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   playerId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  questionId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   remainingTime?: RequiredResolverFn<ResolversTypes['Int'], ParentType, ContextType>;
   score?: RequiredResolverFn<ResolversTypes['Int'], ParentType, ContextType>;
   scriptId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  stepId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type QueryResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   answer: Resolver<Maybe<ResolversTypes['Answer']>, ParentType, ContextType, RequireFields<QueryanswerArgs, 'id'>>;
   answers: OptArgsResolverFn<Array<ResolversTypes['Answer']>, ParentType, ContextType>;
+  colorSet: Resolver<Maybe<ResolversTypes['ColorSet']>, ParentType, ContextType, RequireFields<QuerycolorSetArgs, 'id'>>;
+  colorSets: OptArgsResolverFn<Array<ResolversTypes['ColorSet']>, ParentType, ContextType>;
   department: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QuerydepartmentArgs, 'id'>>;
   departments: OptArgsResolverFn<Array<ResolversTypes['Department']>, ParentType, ContextType>;
   gender: Resolver<Maybe<ResolversTypes['Gender']>, ParentType, ContextType, RequireFields<QuerygenderArgs, 'id'>>;
@@ -1272,6 +1377,8 @@ export type QueryResolvers<ContextType = RedwoodGraphQLContext, ParentType exten
 export type QueryRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   answer?: RequiredResolverFn<Maybe<ResolversTypes['Answer']>, ParentType, ContextType, RequireFields<QueryanswerArgs, 'id'>>;
   answers?: RequiredResolverFn<Array<ResolversTypes['Answer']>, ParentType, ContextType>;
+  colorSet?: RequiredResolverFn<Maybe<ResolversTypes['ColorSet']>, ParentType, ContextType, RequireFields<QuerycolorSetArgs, 'id'>>;
+  colorSets?: RequiredResolverFn<Array<ResolversTypes['ColorSet']>, ParentType, ContextType>;
   department?: RequiredResolverFn<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QuerydepartmentArgs, 'id'>>;
   departments?: RequiredResolverFn<Array<ResolversTypes['Department']>, ParentType, ContextType>;
   gender?: RequiredResolverFn<Maybe<ResolversTypes['Gender']>, ParentType, ContextType, RequireFields<QuerygenderArgs, 'id'>>;
@@ -1304,6 +1411,7 @@ export type QueryRelationResolvers<ContextType = RedwoodGraphQLContext, ParentTy
 export type QuestionResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = {
   Answer: OptArgsResolverFn<Array<Maybe<ResolversTypes['Answer']>>, ParentType, ContextType>;
   Hint: OptArgsResolverFn<Array<Maybe<ResolversTypes['Hint']>>, ParentType, ContextType>;
+  PlayerScript: OptArgsResolverFn<Array<Maybe<ResolversTypes['PlayerScript']>>, ParentType, ContextType>;
   QuestionType: OptArgsResolverFn<ResolversTypes['QuestionType'], ParentType, ContextType>;
   Step: OptArgsResolverFn<ResolversTypes['Step'], ParentType, ContextType>;
   description: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
@@ -1317,6 +1425,7 @@ export type QuestionResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
 export type QuestionRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Question'] = ResolversParentTypes['Question']> = {
   Answer?: RequiredResolverFn<Array<Maybe<ResolversTypes['Answer']>>, ParentType, ContextType>;
   Hint?: RequiredResolverFn<Array<Maybe<ResolversTypes['Hint']>>, ParentType, ContextType>;
+  PlayerScript?: RequiredResolverFn<Array<Maybe<ResolversTypes['PlayerScript']>>, ParentType, ContextType>;
   QuestionType?: RequiredResolverFn<ResolversTypes['QuestionType'], ParentType, ContextType>;
   Step?: RequiredResolverFn<ResolversTypes['Step'], ParentType, ContextType>;
   description?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
@@ -1446,6 +1555,7 @@ export type Resolvers<ContextType = RedwoodGraphQLContext> = {
   AuthPayload: AuthPayloadResolvers<ContextType>;
   BigInt: GraphQLScalarType;
   Byte: GraphQLScalarType;
+  ColorSet: ColorSetResolvers<ContextType>;
   Date: GraphQLScalarType;
   DateTime: GraphQLScalarType;
   Department: DepartmentResolvers<ContextType>;
