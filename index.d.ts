@@ -46,6 +46,7 @@ export type Answer = {
   answer: Scalars['String'];
   description: Scalars['String'];
   id: Scalars['String'];
+  isCorrect: Scalars['Boolean'];
   questionId: Scalars['String'];
 };
 
@@ -67,6 +68,7 @@ export type ColorSet = {
 export type CreateAnswerInput = {
   answer: Scalars['String'];
   description: Scalars['String'];
+  isCorrect: Scalars['Boolean'];
   questionId: Scalars['String'];
 };
 
@@ -724,6 +726,7 @@ export type Step = {
 export type UpdateAnswerInput = {
   answer?: InputMaybe<Scalars['String']>;
   description?: InputMaybe<Scalars['String']>;
+  isCorrect?: InputMaybe<Scalars['Boolean']>;
   questionId?: InputMaybe<Scalars['String']>;
 };
 
@@ -1027,6 +1030,7 @@ export type AnswerResolvers<ContextType = RedwoodGraphQLContext, ParentType exte
   answer: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   description: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  isCorrect: OptArgsResolverFn<ResolversTypes['Boolean'], ParentType, ContextType>;
   questionId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
@@ -1036,6 +1040,7 @@ export type AnswerRelationResolvers<ContextType = RedwoodGraphQLContext, ParentT
   answer?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   description?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  isCorrect?: RequiredResolverFn<ResolversTypes['Boolean'], ParentType, ContextType>;
   questionId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
