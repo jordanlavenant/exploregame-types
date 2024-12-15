@@ -1,6 +1,6 @@
 import { Prisma } from "@prisma/client"
 import { MergePrismaWithSdlTypes, MakeRelationsOptional } from '@redwoodjs/api'
-import { Script as PrismaScript, Location as PrismaLocation, Step as PrismaStep, ScriptStep as PrismaScriptStep, Department as PrismaDepartment, QuestionType as PrismaQuestionType, Question as PrismaQuestion, Answer as PrismaAnswer, HintLevel as PrismaHintLevel, Hint as PrismaHint, User as PrismaUser, Gender as PrismaGender, Player as PrismaPlayer, PlayerScript as PrismaPlayerScript, ColorSet as PrismaColorSet, Character as PrismaCharacter, CharacterStep as PrismaCharacterStep } from '@prisma/client'
+import { Script as PrismaScript, Location as PrismaLocation, Step as PrismaStep, ScriptStep as PrismaScriptStep, Department as PrismaDepartment, QuestionType as PrismaQuestionType, Question as PrismaQuestion, Answer as PrismaAnswer, HintLevel as PrismaHintLevel, Hint as PrismaHint, User as PrismaUser, Gender as PrismaGender, Player as PrismaPlayer, PlayerScript as PrismaPlayerScript, ColorSet as PrismaColorSet, Asset as PrismaAsset } from '@prisma/client'
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { RedwoodGraphQLContext } from '@redwoodjs/graphql-server/dist/types';
 export type Maybe<T> = T | null;
@@ -12,7 +12,6 @@ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
       args?: TArgs,
       obj?: { root: TParent; context: TContext; info: GraphQLResolveInfo }
     ) => TResult | Promise<TResult>
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = Omit<T, K> & { [P in K]-?: NonNullable<T[P]> };
 export type OptArgsResolverFn<TResult, TParent = {}, TContext = {}, TArgs = {}> = (
       args?: TArgs,
@@ -50,29 +49,11 @@ export type Answer = {
   questionId: Scalars['String'];
 };
 
-export type AuthPayload = {
-  __typename?: 'AuthPayload';
-  player: Player;
-  token: Scalars['String'];
-};
-
-export type Character = {
-  __typename?: 'Character';
-  CharacterStep: Array<Maybe<CharacterStep>>;
-  descriptionL?: Maybe<Scalars['String']>;
+export type Asset = {
+  __typename?: 'Asset';
+  Player: Array<Maybe<Player>>;
+  filename?: Maybe<Scalars['String']>;
   id: Scalars['String'];
-  image?: Maybe<Scalars['String']>;
-  nomPerso: Scalars['String'];
-};
-
-export type CharacterStep = {
-  __typename?: 'CharacterStep';
-  Character: Character;
-  Step: Step;
-  characterId: Scalars['String'];
-  id: Scalars['String'];
-  stepId: Scalars['String'];
-  textOrder: Scalars['Int'];
 };
 
 export type CheckAnswerInput = {
@@ -96,16 +77,8 @@ export type CreateAnswerInput = {
   questionId: Scalars['String'];
 };
 
-export type CreateCharacterInput = {
-  descriptionL?: InputMaybe<Scalars['String']>;
-  image?: InputMaybe<Scalars['String']>;
-  nomPerso: Scalars['String'];
-};
-
-export type CreateCharacterStepInput = {
-  characterId: Scalars['String'];
-  stepId: Scalars['String'];
-  textOrder: Scalars['Int'];
+export type CreateAssetInput = {
+  filename?: InputMaybe<Scalars['String']>;
 };
 
 export type CreateColorSetInput = {
@@ -146,6 +119,7 @@ export type CreatePlayerInput = {
   genderId: Scalars['String'];
   hashedPassword: Scalars['String'];
   lastName: Scalars['String'];
+  pictureAssetId?: InputMaybe<Scalars['String']>;
 };
 
 export type CreatePlayerScriptInput = {
@@ -236,17 +210,11 @@ export type Location = {
   name: Scalars['String'];
 };
 
-export type LoginPlayerInput = {
-  email: Scalars['String'];
-  password: Scalars['String'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
   checkAnswer: Scalars['Boolean'];
   createAnswer: Answer;
-  createCharacter: Character;
-  createCharacterStep: CharacterStep;
+  createAsset: Asset;
   createColorSet: ColorSet;
   createDepartment: Department;
   createGender: Gender;
@@ -262,8 +230,7 @@ export type Mutation = {
   createStep: Step;
   createUser: User;
   deleteAnswer: Answer;
-  deleteCharacter: Character;
-  deleteCharacterStep: CharacterStep;
+  deleteAsset: Asset;
   deleteColorSet: ColorSet;
   deleteDepartment: Department;
   deleteGender: Gender;
@@ -278,10 +245,8 @@ export type Mutation = {
   deleteScriptStep: ScriptStep;
   deleteStep: Step;
   deleteUser: User;
-  loginPlayer: AuthPayload;
   updateAnswer: Answer;
-  updateCharacter: Character;
-  updateCharacterStep: CharacterStep;
+  updateAsset: Asset;
   updateColorSet: ColorSet;
   updateDepartment: Department;
   updateGender: Gender;
@@ -309,13 +274,8 @@ export type MutationcreateAnswerArgs = {
 };
 
 
-export type MutationcreateCharacterArgs = {
-  input: CreateCharacterInput;
-};
-
-
-export type MutationcreateCharacterStepArgs = {
-  input: CreateCharacterStepInput;
+export type MutationcreateAssetArgs = {
+  input: CreateAssetInput;
 };
 
 
@@ -394,12 +354,7 @@ export type MutationdeleteAnswerArgs = {
 };
 
 
-export type MutationdeleteCharacterArgs = {
-  id: Scalars['String'];
-};
-
-
-export type MutationdeleteCharacterStepArgs = {
+export type MutationdeleteAssetArgs = {
   id: Scalars['String'];
 };
 
@@ -474,26 +429,15 @@ export type MutationdeleteUserArgs = {
 };
 
 
-export type MutationloginPlayerArgs = {
-  input: LoginPlayerInput;
-};
-
-
 export type MutationupdateAnswerArgs = {
   id: Scalars['String'];
   input: UpdateAnswerInput;
 };
 
 
-export type MutationupdateCharacterArgs = {
+export type MutationupdateAssetArgs = {
   id: Scalars['String'];
-  input: UpdateCharacterInput;
-};
-
-
-export type MutationupdateCharacterStepArgs = {
-  id: Scalars['String'];
-  input: UpdateCharacterStepInput;
+  input: UpdateAssetInput;
 };
 
 
@@ -592,6 +536,8 @@ export type Player = {
   hashedPassword: Scalars['String'];
   id: Scalars['String'];
   lastName: Scalars['String'];
+  picture?: Maybe<Asset>;
+  pictureAssetId?: Maybe<Scalars['String']>;
 };
 
 export type PlayerScript = {
@@ -614,10 +560,8 @@ export type Query = {
   __typename?: 'Query';
   answer?: Maybe<Answer>;
   answers: Array<Answer>;
-  character?: Maybe<Character>;
-  characterStep?: Maybe<CharacterStep>;
-  characterSteps: Array<CharacterStep>;
-  characters: Array<Character>;
+  asset?: Maybe<Asset>;
+  assets: Array<Asset>;
   colorSet?: Maybe<ColorSet>;
   colorSets: Array<ColorSet>;
   department?: Maybe<Department>;
@@ -658,13 +602,7 @@ export type QueryanswerArgs = {
 
 
 /** About the Redwood queries. */
-export type QuerycharacterArgs = {
-  id: Scalars['String'];
-};
-
-
-/** About the Redwood queries. */
-export type QuerycharacterStepArgs = {
+export type QueryassetArgs = {
   id: Scalars['String'];
 };
 
@@ -811,9 +749,7 @@ export type ScriptStep = {
 
 export type Step = {
   __typename?: 'Step';
-  CharacterStep: Array<Maybe<CharacterStep>>;
   Location: Location;
-  PlayerScript: Array<Maybe<PlayerScript>>;
   Questions: Array<Maybe<Question>>;
   ScriptStep: Array<Maybe<ScriptStep>>;
   id: Scalars['String'];
@@ -828,16 +764,8 @@ export type UpdateAnswerInput = {
   questionId?: InputMaybe<Scalars['String']>;
 };
 
-export type UpdateCharacterInput = {
-  descriptionL?: InputMaybe<Scalars['String']>;
-  image?: InputMaybe<Scalars['String']>;
-  nomPerso?: InputMaybe<Scalars['String']>;
-};
-
-export type UpdateCharacterStepInput = {
-  characterId?: InputMaybe<Scalars['String']>;
-  stepId?: InputMaybe<Scalars['String']>;
-  textOrder?: InputMaybe<Scalars['Int']>;
+export type UpdateAssetInput = {
+  filename?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdateColorSetInput = {
@@ -878,6 +806,7 @@ export type UpdatePlayerInput = {
   genderId?: InputMaybe<Scalars['String']>;
   hashedPassword?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
+  pictureAssetId?: InputMaybe<Scalars['String']>;
 };
 
 export type UpdatePlayerScriptInput = {
@@ -936,7 +865,7 @@ export type User = {
 };
 
 type MaybeOrArrayOfMaybe<T> = T | Maybe<T> | Maybe<T>[];
-type AllMappedModels = MaybeOrArrayOfMaybe<Answer | Character | CharacterStep | ColorSet | Department | Gender | Hint | HintLevel | Location | Player | PlayerScript | Question | QuestionType | Script | ScriptStep | Step | User>
+type AllMappedModels = MaybeOrArrayOfMaybe<Answer | Asset | ColorSet | Department | Gender | Hint | HintLevel | Location | Player | PlayerScript | Question | QuestionType | Script | ScriptStep | Step | User>
 
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
@@ -998,17 +927,14 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Answer: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaAnswer, MakeRelationsOptional<Answer, AllMappedModels>, AllMappedModels>>;
-  AuthPayload: ResolverTypeWrapper<Omit<AuthPayload, 'player'> & { player: ResolversTypes['Player'] }>;
+  Asset: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaAsset, MakeRelationsOptional<Asset, AllMappedModels>, AllMappedModels>>;
   BigInt: ResolverTypeWrapper<Scalars['BigInt']>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Byte: ResolverTypeWrapper<Scalars['Byte']>;
-  Character: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaCharacter, MakeRelationsOptional<Character, AllMappedModels>, AllMappedModels>>;
-  CharacterStep: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaCharacterStep, MakeRelationsOptional<CharacterStep, AllMappedModels>, AllMappedModels>>;
   CheckAnswerInput: CheckAnswerInput;
   ColorSet: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaColorSet, MakeRelationsOptional<ColorSet, AllMappedModels>, AllMappedModels>>;
   CreateAnswerInput: CreateAnswerInput;
-  CreateCharacterInput: CreateCharacterInput;
-  CreateCharacterStepInput: CreateCharacterStepInput;
+  CreateAssetInput: CreateAssetInput;
   CreateColorSetInput: CreateColorSetInput;
   CreateDepartmentInput: CreateDepartmentInput;
   CreateGenderInput: CreateGenderInput;
@@ -1034,7 +960,6 @@ export type ResolversTypes = {
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   JSONObject: ResolverTypeWrapper<Scalars['JSONObject']>;
   Location: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaLocation, MakeRelationsOptional<Location, AllMappedModels>, AllMappedModels>>;
-  LoginPlayerInput: LoginPlayerInput;
   Mutation: ResolverTypeWrapper<{}>;
   Player: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaPlayer, MakeRelationsOptional<Player, AllMappedModels>, AllMappedModels>>;
   PlayerScript: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaPlayerScript, MakeRelationsOptional<PlayerScript, AllMappedModels>, AllMappedModels>>;
@@ -1048,8 +973,7 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>;
   Time: ResolverTypeWrapper<Scalars['Time']>;
   UpdateAnswerInput: UpdateAnswerInput;
-  UpdateCharacterInput: UpdateCharacterInput;
-  UpdateCharacterStepInput: UpdateCharacterStepInput;
+  UpdateAssetInput: UpdateAssetInput;
   UpdateColorSetInput: UpdateColorSetInput;
   UpdateDepartmentInput: UpdateDepartmentInput;
   UpdateGenderInput: UpdateGenderInput;
@@ -1070,17 +994,14 @@ export type ResolversTypes = {
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Answer: MergePrismaWithSdlTypes<PrismaAnswer, MakeRelationsOptional<Answer, AllMappedModels>, AllMappedModels>;
-  AuthPayload: Omit<AuthPayload, 'player'> & { player: ResolversParentTypes['Player'] };
+  Asset: MergePrismaWithSdlTypes<PrismaAsset, MakeRelationsOptional<Asset, AllMappedModels>, AllMappedModels>;
   BigInt: Scalars['BigInt'];
   Boolean: Scalars['Boolean'];
   Byte: Scalars['Byte'];
-  Character: MergePrismaWithSdlTypes<PrismaCharacter, MakeRelationsOptional<Character, AllMappedModels>, AllMappedModels>;
-  CharacterStep: MergePrismaWithSdlTypes<PrismaCharacterStep, MakeRelationsOptional<CharacterStep, AllMappedModels>, AllMappedModels>;
   CheckAnswerInput: CheckAnswerInput;
   ColorSet: MergePrismaWithSdlTypes<PrismaColorSet, MakeRelationsOptional<ColorSet, AllMappedModels>, AllMappedModels>;
   CreateAnswerInput: CreateAnswerInput;
-  CreateCharacterInput: CreateCharacterInput;
-  CreateCharacterStepInput: CreateCharacterStepInput;
+  CreateAssetInput: CreateAssetInput;
   CreateColorSetInput: CreateColorSetInput;
   CreateDepartmentInput: CreateDepartmentInput;
   CreateGenderInput: CreateGenderInput;
@@ -1106,7 +1027,6 @@ export type ResolversParentTypes = {
   JSON: Scalars['JSON'];
   JSONObject: Scalars['JSONObject'];
   Location: MergePrismaWithSdlTypes<PrismaLocation, MakeRelationsOptional<Location, AllMappedModels>, AllMappedModels>;
-  LoginPlayerInput: LoginPlayerInput;
   Mutation: {};
   Player: MergePrismaWithSdlTypes<PrismaPlayer, MakeRelationsOptional<Player, AllMappedModels>, AllMappedModels>;
   PlayerScript: MergePrismaWithSdlTypes<PrismaPlayerScript, MakeRelationsOptional<PlayerScript, AllMappedModels>, AllMappedModels>;
@@ -1120,8 +1040,7 @@ export type ResolversParentTypes = {
   String: Scalars['String'];
   Time: Scalars['Time'];
   UpdateAnswerInput: UpdateAnswerInput;
-  UpdateCharacterInput: UpdateCharacterInput;
-  UpdateCharacterStepInput: UpdateCharacterStepInput;
+  UpdateAssetInput: UpdateAssetInput;
   UpdateColorSetInput: UpdateColorSetInput;
   UpdateDepartmentInput: UpdateDepartmentInput;
   UpdateGenderInput: UpdateGenderInput;
@@ -1169,15 +1088,17 @@ export type AnswerRelationResolvers<ContextType = RedwoodGraphQLContext, ParentT
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type AuthPayloadResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
-  player: OptArgsResolverFn<ResolversTypes['Player'], ParentType, ContextType>;
-  token: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+export type AssetResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Asset'] = ResolversParentTypes['Asset']> = {
+  Player: OptArgsResolverFn<Array<Maybe<ResolversTypes['Player']>>, ParentType, ContextType>;
+  filename: OptArgsResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
-export type AuthPayloadRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['AuthPayload'] = ResolversParentTypes['AuthPayload']> = {
-  player?: RequiredResolverFn<ResolversTypes['Player'], ParentType, ContextType>;
-  token?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+export type AssetRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Asset'] = ResolversParentTypes['Asset']> = {
+  Player?: RequiredResolverFn<Array<Maybe<ResolversTypes['Player']>>, ParentType, ContextType>;
+  filename?: RequiredResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1188,44 +1109,6 @@ export interface BigIntScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 export interface ByteScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Byte'], any> {
   name: 'Byte';
 }
-
-export type CharacterResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Character'] = ResolversParentTypes['Character']> = {
-  CharacterStep: OptArgsResolverFn<Array<Maybe<ResolversTypes['CharacterStep']>>, ParentType, ContextType>;
-  descriptionL: OptArgsResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  image: OptArgsResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  nomPerso: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CharacterRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Character'] = ResolversParentTypes['Character']> = {
-  CharacterStep?: RequiredResolverFn<Array<Maybe<ResolversTypes['CharacterStep']>>, ParentType, ContextType>;
-  descriptionL?: RequiredResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  image?: RequiredResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  nomPerso?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CharacterStepResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['CharacterStep'] = ResolversParentTypes['CharacterStep']> = {
-  Character: OptArgsResolverFn<ResolversTypes['Character'], ParentType, ContextType>;
-  Step: OptArgsResolverFn<ResolversTypes['Step'], ParentType, ContextType>;
-  characterId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  stepId: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  textOrder: OptArgsResolverFn<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
-
-export type CharacterStepRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['CharacterStep'] = ResolversParentTypes['CharacterStep']> = {
-  Character?: RequiredResolverFn<ResolversTypes['Character'], ParentType, ContextType>;
-  Step?: RequiredResolverFn<ResolversTypes['Step'], ParentType, ContextType>;
-  characterId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  stepId?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
-  textOrder?: RequiredResolverFn<ResolversTypes['Int'], ParentType, ContextType>;
-  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
-};
 
 export type ColorSetResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['ColorSet'] = ResolversParentTypes['ColorSet']> = {
   Department: OptArgsResolverFn<Array<Maybe<ResolversTypes['Department']>>, ParentType, ContextType>;
@@ -1354,8 +1237,7 @@ export type LocationRelationResolvers<ContextType = RedwoodGraphQLContext, Paren
 export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   checkAnswer: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcheckAnswerArgs, 'input'>>;
   createAnswer: Resolver<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationcreateAnswerArgs, 'input'>>;
-  createCharacter: Resolver<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationcreateCharacterArgs, 'input'>>;
-  createCharacterStep: Resolver<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationcreateCharacterStepArgs, 'input'>>;
+  createAsset: Resolver<ResolversTypes['Asset'], ParentType, ContextType, RequireFields<MutationcreateAssetArgs, 'input'>>;
   createColorSet: Resolver<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationcreateColorSetArgs, 'input'>>;
   createDepartment: Resolver<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationcreateDepartmentArgs, 'input'>>;
   createGender: Resolver<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationcreateGenderArgs, 'input'>>;
@@ -1371,8 +1253,7 @@ export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
   createStep: Resolver<ResolversTypes['Step'], ParentType, ContextType, RequireFields<MutationcreateStepArgs, 'input'>>;
   createUser: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationcreateUserArgs, 'input'>>;
   deleteAnswer: Resolver<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationdeleteAnswerArgs, 'id'>>;
-  deleteCharacter: Resolver<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationdeleteCharacterArgs, 'id'>>;
-  deleteCharacterStep: Resolver<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationdeleteCharacterStepArgs, 'id'>>;
+  deleteAsset: Resolver<ResolversTypes['Asset'], ParentType, ContextType, RequireFields<MutationdeleteAssetArgs, 'id'>>;
   deleteColorSet: Resolver<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationdeleteColorSetArgs, 'id'>>;
   deleteDepartment: Resolver<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationdeleteDepartmentArgs, 'id'>>;
   deleteGender: Resolver<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationdeleteGenderArgs, 'id'>>;
@@ -1387,10 +1268,8 @@ export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
   deleteScriptStep: Resolver<ResolversTypes['ScriptStep'], ParentType, ContextType, RequireFields<MutationdeleteScriptStepArgs, 'id'>>;
   deleteStep: Resolver<ResolversTypes['Step'], ParentType, ContextType, RequireFields<MutationdeleteStepArgs, 'id'>>;
   deleteUser: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationdeleteUserArgs, 'id'>>;
-  loginPlayer: Resolver<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationloginPlayerArgs, 'input'>>;
   updateAnswer: Resolver<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationupdateAnswerArgs, 'id' | 'input'>>;
-  updateCharacter: Resolver<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationupdateCharacterArgs, 'id' | 'input'>>;
-  updateCharacterStep: Resolver<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationupdateCharacterStepArgs, 'id' | 'input'>>;
+  updateAsset: Resolver<ResolversTypes['Asset'], ParentType, ContextType, RequireFields<MutationupdateAssetArgs, 'id' | 'input'>>;
   updateColorSet: Resolver<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationupdateColorSetArgs, 'id' | 'input'>>;
   updateDepartment: Resolver<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationupdateDepartmentArgs, 'id' | 'input'>>;
   updateGender: Resolver<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationupdateGenderArgs, 'id' | 'input'>>;
@@ -1410,8 +1289,7 @@ export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
 export type MutationRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   checkAnswer?: RequiredResolverFn<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcheckAnswerArgs, 'input'>>;
   createAnswer?: RequiredResolverFn<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationcreateAnswerArgs, 'input'>>;
-  createCharacter?: RequiredResolverFn<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationcreateCharacterArgs, 'input'>>;
-  createCharacterStep?: RequiredResolverFn<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationcreateCharacterStepArgs, 'input'>>;
+  createAsset?: RequiredResolverFn<ResolversTypes['Asset'], ParentType, ContextType, RequireFields<MutationcreateAssetArgs, 'input'>>;
   createColorSet?: RequiredResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationcreateColorSetArgs, 'input'>>;
   createDepartment?: RequiredResolverFn<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationcreateDepartmentArgs, 'input'>>;
   createGender?: RequiredResolverFn<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationcreateGenderArgs, 'input'>>;
@@ -1427,8 +1305,7 @@ export type MutationRelationResolvers<ContextType = RedwoodGraphQLContext, Paren
   createStep?: RequiredResolverFn<ResolversTypes['Step'], ParentType, ContextType, RequireFields<MutationcreateStepArgs, 'input'>>;
   createUser?: RequiredResolverFn<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationcreateUserArgs, 'input'>>;
   deleteAnswer?: RequiredResolverFn<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationdeleteAnswerArgs, 'id'>>;
-  deleteCharacter?: RequiredResolverFn<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationdeleteCharacterArgs, 'id'>>;
-  deleteCharacterStep?: RequiredResolverFn<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationdeleteCharacterStepArgs, 'id'>>;
+  deleteAsset?: RequiredResolverFn<ResolversTypes['Asset'], ParentType, ContextType, RequireFields<MutationdeleteAssetArgs, 'id'>>;
   deleteColorSet?: RequiredResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationdeleteColorSetArgs, 'id'>>;
   deleteDepartment?: RequiredResolverFn<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationdeleteDepartmentArgs, 'id'>>;
   deleteGender?: RequiredResolverFn<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationdeleteGenderArgs, 'id'>>;
@@ -1443,10 +1320,8 @@ export type MutationRelationResolvers<ContextType = RedwoodGraphQLContext, Paren
   deleteScriptStep?: RequiredResolverFn<ResolversTypes['ScriptStep'], ParentType, ContextType, RequireFields<MutationdeleteScriptStepArgs, 'id'>>;
   deleteStep?: RequiredResolverFn<ResolversTypes['Step'], ParentType, ContextType, RequireFields<MutationdeleteStepArgs, 'id'>>;
   deleteUser?: RequiredResolverFn<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationdeleteUserArgs, 'id'>>;
-  loginPlayer?: RequiredResolverFn<ResolversTypes['AuthPayload'], ParentType, ContextType, RequireFields<MutationloginPlayerArgs, 'input'>>;
   updateAnswer?: RequiredResolverFn<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationupdateAnswerArgs, 'id' | 'input'>>;
-  updateCharacter?: RequiredResolverFn<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationupdateCharacterArgs, 'id' | 'input'>>;
-  updateCharacterStep?: RequiredResolverFn<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationupdateCharacterStepArgs, 'id' | 'input'>>;
+  updateAsset?: RequiredResolverFn<ResolversTypes['Asset'], ParentType, ContextType, RequireFields<MutationupdateAssetArgs, 'id' | 'input'>>;
   updateColorSet?: RequiredResolverFn<ResolversTypes['ColorSet'], ParentType, ContextType, RequireFields<MutationupdateColorSetArgs, 'id' | 'input'>>;
   updateDepartment?: RequiredResolverFn<ResolversTypes['Department'], ParentType, ContextType, RequireFields<MutationupdateDepartmentArgs, 'id' | 'input'>>;
   updateGender?: RequiredResolverFn<ResolversTypes['Gender'], ParentType, ContextType, RequireFields<MutationupdateGenderArgs, 'id' | 'input'>>;
@@ -1474,6 +1349,8 @@ export type PlayerResolvers<ContextType = RedwoodGraphQLContext, ParentType exte
   hashedPassword: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   lastName: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  picture: OptArgsResolverFn<Maybe<ResolversTypes['Asset']>, ParentType, ContextType>;
+  pictureAssetId: OptArgsResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1488,6 +1365,8 @@ export type PlayerRelationResolvers<ContextType = RedwoodGraphQLContext, ParentT
   hashedPassword?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
   lastName?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
+  picture?: RequiredResolverFn<Maybe<ResolversTypes['Asset']>, ParentType, ContextType>;
+  pictureAssetId?: RequiredResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -1524,10 +1403,8 @@ export type PlayerScriptRelationResolvers<ContextType = RedwoodGraphQLContext, P
 export type QueryResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   answer: Resolver<Maybe<ResolversTypes['Answer']>, ParentType, ContextType, RequireFields<QueryanswerArgs, 'id'>>;
   answers: OptArgsResolverFn<Array<ResolversTypes['Answer']>, ParentType, ContextType>;
-  character: Resolver<Maybe<ResolversTypes['Character']>, ParentType, ContextType, RequireFields<QuerycharacterArgs, 'id'>>;
-  characterStep: Resolver<Maybe<ResolversTypes['CharacterStep']>, ParentType, ContextType, RequireFields<QuerycharacterStepArgs, 'id'>>;
-  characterSteps: OptArgsResolverFn<Array<ResolversTypes['CharacterStep']>, ParentType, ContextType>;
-  characters: OptArgsResolverFn<Array<ResolversTypes['Character']>, ParentType, ContextType>;
+  asset: Resolver<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<QueryassetArgs, 'id'>>;
+  assets: OptArgsResolverFn<Array<ResolversTypes['Asset']>, ParentType, ContextType>;
   colorSet: Resolver<Maybe<ResolversTypes['ColorSet']>, ParentType, ContextType, RequireFields<QuerycolorSetArgs, 'id'>>;
   colorSets: OptArgsResolverFn<Array<ResolversTypes['ColorSet']>, ParentType, ContextType>;
   department: Resolver<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QuerydepartmentArgs, 'id'>>;
@@ -1562,10 +1439,8 @@ export type QueryResolvers<ContextType = RedwoodGraphQLContext, ParentType exten
 export type QueryRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   answer?: RequiredResolverFn<Maybe<ResolversTypes['Answer']>, ParentType, ContextType, RequireFields<QueryanswerArgs, 'id'>>;
   answers?: RequiredResolverFn<Array<ResolversTypes['Answer']>, ParentType, ContextType>;
-  character?: RequiredResolverFn<Maybe<ResolversTypes['Character']>, ParentType, ContextType, RequireFields<QuerycharacterArgs, 'id'>>;
-  characterStep?: RequiredResolverFn<Maybe<ResolversTypes['CharacterStep']>, ParentType, ContextType, RequireFields<QuerycharacterStepArgs, 'id'>>;
-  characterSteps?: RequiredResolverFn<Array<ResolversTypes['CharacterStep']>, ParentType, ContextType>;
-  characters?: RequiredResolverFn<Array<ResolversTypes['Character']>, ParentType, ContextType>;
+  asset?: RequiredResolverFn<Maybe<ResolversTypes['Asset']>, ParentType, ContextType, RequireFields<QueryassetArgs, 'id'>>;
+  assets?: RequiredResolverFn<Array<ResolversTypes['Asset']>, ParentType, ContextType>;
   colorSet?: RequiredResolverFn<Maybe<ResolversTypes['ColorSet']>, ParentType, ContextType, RequireFields<QuerycolorSetArgs, 'id'>>;
   colorSets?: RequiredResolverFn<Array<ResolversTypes['ColorSet']>, ParentType, ContextType>;
   department?: RequiredResolverFn<Maybe<ResolversTypes['Department']>, ParentType, ContextType, RequireFields<QuerydepartmentArgs, 'id'>>;
@@ -1696,9 +1571,7 @@ export type ScriptStepRelationResolvers<ContextType = RedwoodGraphQLContext, Par
 };
 
 export type StepResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
-  CharacterStep: OptArgsResolverFn<Array<Maybe<ResolversTypes['CharacterStep']>>, ParentType, ContextType>;
   Location: OptArgsResolverFn<ResolversTypes['Location'], ParentType, ContextType>;
-  PlayerScript: OptArgsResolverFn<Array<Maybe<ResolversTypes['PlayerScript']>>, ParentType, ContextType>;
   Questions: OptArgsResolverFn<Array<Maybe<ResolversTypes['Question']>>, ParentType, ContextType>;
   ScriptStep: OptArgsResolverFn<Array<Maybe<ResolversTypes['ScriptStep']>>, ParentType, ContextType>;
   id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
@@ -1708,9 +1581,7 @@ export type StepResolvers<ContextType = RedwoodGraphQLContext, ParentType extend
 };
 
 export type StepRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Step'] = ResolversParentTypes['Step']> = {
-  CharacterStep?: RequiredResolverFn<Array<Maybe<ResolversTypes['CharacterStep']>>, ParentType, ContextType>;
   Location?: RequiredResolverFn<ResolversTypes['Location'], ParentType, ContextType>;
-  PlayerScript?: RequiredResolverFn<Array<Maybe<ResolversTypes['PlayerScript']>>, ParentType, ContextType>;
   Questions?: RequiredResolverFn<Array<Maybe<ResolversTypes['Question']>>, ParentType, ContextType>;
   ScriptStep?: RequiredResolverFn<Array<Maybe<ResolversTypes['ScriptStep']>>, ParentType, ContextType>;
   id?: RequiredResolverFn<ResolversTypes['String'], ParentType, ContextType>;
@@ -1745,11 +1616,9 @@ export type UserRelationResolvers<ContextType = RedwoodGraphQLContext, ParentTyp
 
 export type Resolvers<ContextType = RedwoodGraphQLContext> = {
   Answer: AnswerResolvers<ContextType>;
-  AuthPayload: AuthPayloadResolvers<ContextType>;
+  Asset: AssetResolvers<ContextType>;
   BigInt: GraphQLScalarType;
   Byte: GraphQLScalarType;
-  Character: CharacterResolvers<ContextType>;
-  CharacterStep: CharacterStepResolvers<ContextType>;
   ColorSet: ColorSetResolvers<ContextType>;
   Date: GraphQLScalarType;
   DateTime: GraphQLScalarType;
