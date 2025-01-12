@@ -80,6 +80,12 @@ export type CheckAnswerInput = {
   questionId: Scalars['String'];
 };
 
+export type CheckAnswerOutput = {
+  __typename?: 'CheckAnswerOutput';
+  correctAnswer?: Maybe<Scalars['String']>;
+  isCorrect: Scalars['Boolean'];
+};
+
 export type ColorSet = {
   __typename?: 'ColorSet';
   Department: Array<Maybe<Department>>;
@@ -248,7 +254,7 @@ export type LoginPlayerInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
-  checkAnswer: Scalars['Boolean'];
+  checkAnswer: CheckAnswerOutput;
   createAnswer: Answer;
   createCharacter: Character;
   createCharacterStep: CharacterStep;
@@ -1014,6 +1020,7 @@ export type ResolversTypes = {
   Character: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaCharacter, MakeRelationsOptional<Character, AllMappedModels>, AllMappedModels>>;
   CharacterStep: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaCharacterStep, MakeRelationsOptional<CharacterStep, AllMappedModels>, AllMappedModels>>;
   CheckAnswerInput: CheckAnswerInput;
+  CheckAnswerOutput: ResolverTypeWrapper<CheckAnswerOutput>;
   ColorSet: ResolverTypeWrapper<MergePrismaWithSdlTypes<PrismaColorSet, MakeRelationsOptional<ColorSet, AllMappedModels>, AllMappedModels>>;
   CreateAnswerInput: CreateAnswerInput;
   CreateCharacterInput: CreateCharacterInput;
@@ -1087,6 +1094,7 @@ export type ResolversParentTypes = {
   Character: MergePrismaWithSdlTypes<PrismaCharacter, MakeRelationsOptional<Character, AllMappedModels>, AllMappedModels>;
   CharacterStep: MergePrismaWithSdlTypes<PrismaCharacterStep, MakeRelationsOptional<CharacterStep, AllMappedModels>, AllMappedModels>;
   CheckAnswerInput: CheckAnswerInput;
+  CheckAnswerOutput: CheckAnswerOutput;
   ColorSet: MergePrismaWithSdlTypes<PrismaColorSet, MakeRelationsOptional<ColorSet, AllMappedModels>, AllMappedModels>;
   CreateAnswerInput: CreateAnswerInput;
   CreateCharacterInput: CreateCharacterInput;
@@ -1238,6 +1246,18 @@ export type CharacterStepRelationResolvers<ContextType = RedwoodGraphQLContext, 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
+export type CheckAnswerOutputResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['CheckAnswerOutput'] = ResolversParentTypes['CheckAnswerOutput']> = {
+  correctAnswer: OptArgsResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isCorrect: OptArgsResolverFn<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
+export type CheckAnswerOutputRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['CheckAnswerOutput'] = ResolversParentTypes['CheckAnswerOutput']> = {
+  correctAnswer?: RequiredResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  isCorrect?: RequiredResolverFn<ResolversTypes['Boolean'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+};
+
 export type ColorSetResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['ColorSet'] = ResolversParentTypes['ColorSet']> = {
   Department: OptArgsResolverFn<Array<Maybe<ResolversTypes['Department']>>, ParentType, ContextType>;
   id: OptArgsResolverFn<ResolversTypes['String'], ParentType, ContextType>;
@@ -1367,7 +1387,7 @@ export type LocationRelationResolvers<ContextType = RedwoodGraphQLContext, Paren
 };
 
 export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  checkAnswer: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcheckAnswerArgs, 'input'>>;
+  checkAnswer: Resolver<ResolversTypes['CheckAnswerOutput'], ParentType, ContextType, RequireFields<MutationcheckAnswerArgs, 'input'>>;
   createAnswer: Resolver<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationcreateAnswerArgs, 'input'>>;
   createCharacter: Resolver<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationcreateCharacterArgs, 'input'>>;
   createCharacterStep: Resolver<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationcreateCharacterStepArgs, 'input'>>;
@@ -1423,7 +1443,7 @@ export type MutationResolvers<ContextType = RedwoodGraphQLContext, ParentType ex
 };
 
 export type MutationRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
-  checkAnswer?: RequiredResolverFn<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationcheckAnswerArgs, 'input'>>;
+  checkAnswer?: RequiredResolverFn<ResolversTypes['CheckAnswerOutput'], ParentType, ContextType, RequireFields<MutationcheckAnswerArgs, 'input'>>;
   createAnswer?: RequiredResolverFn<ResolversTypes['Answer'], ParentType, ContextType, RequireFields<MutationcreateAnswerArgs, 'input'>>;
   createCharacter?: RequiredResolverFn<ResolversTypes['Character'], ParentType, ContextType, RequireFields<MutationcreateCharacterArgs, 'input'>>;
   createCharacterStep?: RequiredResolverFn<ResolversTypes['CharacterStep'], ParentType, ContextType, RequireFields<MutationcreateCharacterStepArgs, 'input'>>;
@@ -1767,6 +1787,7 @@ export type Resolvers<ContextType = RedwoodGraphQLContext> = {
   Byte: GraphQLScalarType;
   Character: CharacterResolvers<ContextType>;
   CharacterStep: CharacterStepResolvers<ContextType>;
+  CheckAnswerOutput: CheckAnswerOutputResolvers<ContextType>;
   ColorSet: ColorSetResolvers<ContextType>;
   Date: GraphQLScalarType;
   DateTime: GraphQLScalarType;
