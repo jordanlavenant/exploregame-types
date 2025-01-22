@@ -76,13 +76,13 @@ export type CharacterStep = {
 };
 
 export type CheckAnswerInput = {
-  answer: Scalars['String'];
+  answers?: InputMaybe<Array<Scalars['String']>>;
   questionId: Scalars['String'];
 };
 
 export type CheckAnswerOutput = {
   __typename?: 'CheckAnswerOutput';
-  correctAnswer?: Maybe<Scalars['String']>;
+  correctAnswers?: Maybe<Array<Maybe<Scalars['String']>>>;
   isCorrect: Scalars['Boolean'];
 };
 
@@ -1247,13 +1247,13 @@ export type CharacterStepRelationResolvers<ContextType = RedwoodGraphQLContext, 
 };
 
 export type CheckAnswerOutputResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['CheckAnswerOutput'] = ResolversParentTypes['CheckAnswerOutput']> = {
-  correctAnswer: OptArgsResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  correctAnswers: OptArgsResolverFn<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   isCorrect: OptArgsResolverFn<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
 export type CheckAnswerOutputRelationResolvers<ContextType = RedwoodGraphQLContext, ParentType extends ResolversParentTypes['CheckAnswerOutput'] = ResolversParentTypes['CheckAnswerOutput']> = {
-  correctAnswer?: RequiredResolverFn<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  correctAnswers?: RequiredResolverFn<Maybe<Array<Maybe<ResolversTypes['String']>>>, ParentType, ContextType>;
   isCorrect?: RequiredResolverFn<ResolversTypes['Boolean'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
